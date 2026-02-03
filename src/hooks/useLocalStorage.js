@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 
 /**
  * Hook pour synchroniser un state avec localStorage

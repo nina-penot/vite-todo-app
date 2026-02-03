@@ -8,11 +8,11 @@ import TodoFilter from './components/TodoFilter';
 import TodoStats from './components/TodoStats';
 
 // Import du hook custom
-import useTodos from './hooks/useTodos';
+import useApi from './hooks/useApi';
 
 function App() {
-  // Hook custom pour gerer les todos (avec localStorage)
-  const { todos, ajouterTodo, toggleTodo, supprimerTodo, editerTodo, toutSupprimer } = useTodos();
+  // Hook custom pour gerer les todos (avec API backend)
+  const { todos, loading, error, ajouterTodo, toggleTodo, supprimerTodo, editerTodo, toutSupprimer } = useApi();
 
   // State pour le filtre actif
   const [filtre, setFiltre] = useState('toutes');
@@ -35,6 +35,9 @@ function App() {
       toutSupprimer();
     }
   };
+
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p>Erreur : {error.message}</p>;
 
   return (
     <div className="app-container">
