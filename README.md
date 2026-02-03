@@ -13,7 +13,7 @@ Application de gestion de taches construite avec React et Vite, connectee a une 
 npm install
 ```
 
-Copier le fichier d'environnement et adapter si besoin :
+Copie le fichier d'environnement et adapte si besoin :
 
 ```bash
 cp .env.example .env
@@ -52,7 +52,7 @@ src/
 
 Deux fonctions sont a completer dans le fichier `src/hooks/useApi.js`.
 
-Les fonctions `fetchTodos` (GET), `ajouterTodo` (POST), `editerTodo` (PUT) et `toutSupprimer` (DELETE) sont deja codees. Inspirez-vous de ces exemples pour completer les deux fonctions ci-dessous.
+Les fonctions `fetchTodos` (GET), `ajouterTodo` (POST), `editerTodo` (PUT) et `toutSupprimer` (DELETE) sont deja codees. Inspire-toi de ces exemples pour completer les deux fonctions ci-dessous.
 
 ### TODO 1 : `toggleTodo` (PUT)
 
@@ -65,7 +65,7 @@ Les fonctions `fetchTodos` (GET), `ajouterTodo` (POST), `editerTodo` (PUT) et `t
 2. Envoyer une requete `PUT` sur `API_URL/${id}` avec le todo complet, en inversant la valeur de `completed` (penser a la conversion : le front utilise `true/false`, l'API attend `1/0`)
 3. Rafraichir la liste en appelant `fetchTodos()`
 
-**Indice :** Regardez la fonction `editerTodo` juste en dessous, le fonctionnement est quasiment identique.
+**Indice :** Regarde la fonction `editerTodo` juste en dessous, le fonctionnement est quasiment identique.
 
 ### TODO 2 : `supprimerTodo` (DELETE)
 
@@ -77,7 +77,7 @@ Les fonctions `fetchTodos` (GET), `ajouterTodo` (POST), `editerTodo` (PUT) et `t
 1. Envoyer une requete `DELETE` sur `API_URL/${id}`
 2. Rafraichir la liste en appelant `fetchTodos()`
 
-**Indice :** Regardez la fonction `toutSupprimer` juste en dessous, elle fait deja des appels DELETE unitaires.
+**Indice :** Regarde la fonction `toutSupprimer` juste en dessous, elle fait deja des appels DELETE unitaires.
 
 ---
 
@@ -92,7 +92,7 @@ Cette conversion est deja geree dans `fetchTodos` (API vers front) et dans `ajou
 
 ## Fichiers de reference
 
-Les anciens hooks utilisant le localStorage sont conserves dans le projet (imports commentes) pour que vous puissiez comparer les deux approches :
+Les anciens hooks utilisant le localStorage sont conserves dans le projet (imports commentes) pour que tu puisses comparer les deux approches :
 
 - `src/hooks/useLocalStorage.js` : persistance avec localStorage
 - `src/hooks/useTodos.js` : logique CRUD en local
