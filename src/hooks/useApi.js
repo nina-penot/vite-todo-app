@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL;
+const USERS_URL = import.meta.env.VITE_API_USER_URL;
+const REGISTER_URL = import.meta.env.VITE_REGISTER;
+const LOGIN_URL = import.meta.env.VITE_LOGIN;
 
 function useApi() {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [users, setUsers] = useState([]);
 
   // Récupérer tous les todos (GET)
   const fetchTodos = async () => {
@@ -13,6 +17,7 @@ function useApi() {
       const response = await fetch(API_URL);
       if (!response.ok) throw new Error('Erreur lors de la récupération des todos');
       const data = await response.json();
+      //console.log(data);
       setTodos(data.results.map(todo => ({
         id: todo.id,
         texte: todo.text,
@@ -25,11 +30,34 @@ function useApi() {
     }
   };
 
+  //récupérer tous les users
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(USERS_URL);
+      if (!response.ok) throw new Error('Erreur lors de la récupération des users');
+      const data = await response.json();
+      setUsers(data.results.map(user => ({
+        id: user.id,
+        email: user.email,
+        name: user.name
+      })));
+    } catch (err) {
+      console.log(err);
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Appel au montage du composant
   useEffect(() => {
     fetchTodos();
+    fetchUsers();
   }, []);
 
+
+  // DB_TODOS MANAGEMENT
+  //---------------------------
   // Ajouter un todo (POST)
   const ajouterTodo = async (texte) => {
     const response = await fetch(API_URL, {
@@ -46,7 +74,7 @@ function useApi() {
     try {
       // on trouve le todo à modifier
       const todo = todos.find(t => t.id === id);
-      console.log(todos);
+      //console.log(todos);
       if (!todo) throw new Error("Todo non trouvé");
 
       // on envoie la requête PUT avec l'état inversé
@@ -59,7 +87,7 @@ function useApi() {
         })
       });
 
-      console.log(response);
+      //console.log(response);
       if (!response.ok) throw new Error("Erreur lors de la modification");
 
       //on rafraichit la liste
@@ -74,21 +102,21 @@ function useApi() {
     const response = await fetch(API_URL + "/" + id, {
       method: "DELETE",
     });
-    console.log(response);
+    //console.log(response);
     if (!response.ok) throw new Error("Erreur lors de la suppression.");
     await fetchTodos();
   };
 
   // Modifier le texte d'un todo (PUT)
   const editerTodo = async (id, nouveauTexte) => {
-    console.log("editerTodo: ", id, nouveauTexte, ":end editerTodo");
+    //console.log("editerTodo: ", id, nouveauTexte, ":end editerTodo");
     const todo = todos.find(t => t.id === id);
     const response = await fetch(API_URL + "/" + id, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: nouveauTexte, completed: todo.completed })
     });
-    console.log(response);
+    //console.log(response);
     if (!response.ok) throw new Error("Erreur lors de l'édition");
     await fetchTodos();
   };
@@ -101,15 +129,50 @@ function useApi() {
     await fetchTodos();
   };
 
+  // DB_USERS MANAGEMENT
+  //------------------------
+
+  //register/create user
+  const registerUser = async (email, password, name) => {
+    console.log("registerUser from API: ", email, password, name);
+    const response = await fetch(REGISTER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password, name: name })
+    });
+    if (!response.ok) throw new Error("Erreur lors de l'inscription.");
+    await fetchUsers();
+  };
+
+  //login user
+  const loginUser = async (email, password) => {
+    const response = await fetch(LOGIN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    if (!response.ok) throw new Error("Erreur lors du login");
+    sessionStorage.setItem("login", email);
+    //await fetchUsers();
+  };
+
+  //logout user
+  const logoutuser = () => {
+    sessionStorage.clear();
+  }
+
   return {
     todos,
+    users,
     loading,
     error,
     ajouterTodo,
     toggleTodo,
     supprimerTodo,
     editerTodo,
-    toutSupprimer
+    toutSupprimer,
+    registerUser,
+    loginUser
   };
 }
 
