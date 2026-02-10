@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useApi from "../hooks/useApi";
 
-export default function UserLoginForm() {
+export default function UserLoginForm({ onLogin }) {
 
     //input values
     const [email_value, setEmailValue] = useState("");
@@ -20,20 +20,26 @@ export default function UserLoginForm() {
         setErrEmail("");
         setErrPass("");
 
+        //error tracker
+        let has_errors = false;
+
         //email regex
         const email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (!email_regex.test(email_value)) {
             setErrEmail("Veuillez utiliser le format d'un email (exemple@email.com).");
+            has_errors = true;
         }
         if (email_value == "") {
             setErrEmail("L'email ne peut pas être vide.");
+            has_errors = true;
         }
         if (pass_value == "") {
             setErrPass("Le mot de passe ne peut pas être vide.");
+            has_errors = true;
         }
 
-        if (err_email || err_pass) {
+        if (has_errors) {
             return true;
         } else {
             return false;
@@ -47,6 +53,7 @@ export default function UserLoginForm() {
             return;
         } else {
             //log user
+            onLogin(email_value, pass_value);
         }
     }
 

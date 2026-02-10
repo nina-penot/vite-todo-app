@@ -11,6 +11,8 @@ function useApi() {
   const [error, setError] = useState(null);
   const [users, setUsers] = useState([]);
 
+  const [soft_error, setSoftError] = useState(null);
+
   // Récupérer tous les todos (GET)
   const fetchTodos = async () => {
     try {
@@ -134,14 +136,23 @@ function useApi() {
 
   //register/create user
   const registerUser = async (email, password, name) => {
-    console.log("registerUser from API: ", email, password, name);
-    const response = await fetch(REGISTER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, password: password, name: name })
-    });
-    if (!response.ok) throw new Error("Erreur lors de l'inscription.");
-    await fetchUsers();
+    try {
+      //console.log("registerUser from API: ", email, password, name);
+      const response = await fetch(REGISTER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password, name: name })
+      });
+      if (!response.ok) {
+        let message = await response.json();
+        console.log(message.message);
+        throw new Error("Erreur lors de l'inscription.");
+      }
+      await fetchUsers();
+    } catch (err) {
+      setSoftError("Erreur lors de l'inscription, cet email existe peut-être déjà.");
+    }
+
   };
 
   //login user
@@ -161,18 +172,25 @@ function useApi() {
     sessionStorage.clear();
   }
 
+  //reset softerror
+  const resetSoftError = () => {
+    setSoftError(null);
+  }
+
   return {
     todos,
     users,
     loading,
     error,
+    soft_error,
     ajouterTodo,
     toggleTodo,
     supprimerTodo,
     editerTodo,
     toutSupprimer,
     registerUser,
-    loginUser
+    loginUser,
+    resetSoftError
   };
 }
 

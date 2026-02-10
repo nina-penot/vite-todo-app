@@ -19,48 +19,7 @@ export default function UserRegisterForm({ onRegister }) {
     const [success, setSuccess] = useState("");
 
     //hook
-    const { users } = useApi();
-    //console.log(users);
-
-    // function handleErrors() {
-
-    //     //resets first to clear previous errors
-    //     setErrEmail("");
-    //     setErrName("");
-    //     setErrPass("");
-
-    //     //email regex
-    //     const email_regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    //     if (!email_regex.test(email_value)) {
-    //         setErrEmail("Veuillez utiliser le format d'un email (exemple@email.com).");
-    //     }
-    //     if (email_value == "") {
-    //         setErrEmail("L'email ne peut pas être vide.");
-    //     }
-    //     if (users) {
-    //         //find user
-    //         const userExists = users.find(u => u.email === email_value);
-    //         if (userExists) {
-    //             setErrEmail("Cet email existe déjà.");
-    //         }
-    //     }
-
-    //     if (name_value == "") {
-    //         setErrName("Le nom ne peut pas être vide.");
-    //     }
-
-    //     if (pass_value == "") {
-    //         setErrPass("Le mot de passe ne peut pas être vide.");
-    //     }
-
-
-    //     if (err_email || err_name || err_pass) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+    const { soft_error, resetSoftError } = useApi();
 
     useEffect(() => {
         if (success) {
@@ -75,6 +34,7 @@ export default function UserRegisterForm({ onRegister }) {
     function handleClick(e) {
         e.preventDefault();
         let has_errors = false;
+        let send_error = false;
 
         //resets first to clear previous errors
         setErrEmail("");
@@ -91,14 +51,6 @@ export default function UserRegisterForm({ onRegister }) {
         if (email_value == "") {
             setErrEmail("L'email ne peut pas être vide.");
             has_errors = true;
-        }
-        if (users) {
-            //find user
-            const userExists = users.find(u => u.email === email_value);
-            if (userExists) {
-                setErrEmail("Cet email existe déjà.");
-                has_errors = true;
-            }
         }
 
         if (name_value == "") {
@@ -117,19 +69,21 @@ export default function UserRegisterForm({ onRegister }) {
 
         //register the user
         onRegister(email_value.trim(), pass_value.trim(), name_value.trim());
-        setSuccess("Inscrit avec succès.");
-        setEmailValue('');
-        setNameValue('');
-        setPassValue('');
-        setErrEmail('');
-        setErrName('');
-        setErrPass('');
-
+        if (soft_error == null) {
+            setSuccess("Inscrit avec succès.");
+            setEmailValue('');
+            setNameValue('');
+            setPassValue('');
+            setErrEmail('');
+            setErrName('');
+            setErrPass('');
+        }
     }
 
     return (
         <form>
             {success && <p>{success}</p>}
+            {soft_error && <p>{soft_error}</p>}
             <div>Email</div>
             <input onChange={(e) => { setEmailValue(e.target.value) }}
                 className="todo-input" type="email" value={email_value}></input>
